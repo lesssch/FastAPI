@@ -1,2 +1,1 @@
-# FastAPI
-FastAPI Homework ML2023
+# FastAPI Homework ML2023
