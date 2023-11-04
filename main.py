@@ -54,3 +54,8 @@ def get_post(tms: Timestamp):
 def get_dog(kind: Union[DogType, None] = None) -> list:
     result = [dogs_db[key] for key, value in dogs_db.items() if value.kind == kind]
     return result
+
+
+@app.post("/dog")
+def create_dog(dog: Dog) -> Dog:
+    return dog
