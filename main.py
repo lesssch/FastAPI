@@ -5,9 +5,9 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    return "Hello, world!"
+    return
 
 
-@app.get("/add")
-def x_y(x: int, y: int) -> int:
-    return x + y
+@app.post("/post")
+def get_post():
+    return
