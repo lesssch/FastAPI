@@ -1,5 +1,6 @@
-from array import array
 from enum import Enum
+from typing import Union
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -50,6 +51,6 @@ def get_post(tms: Timestamp):
 
 
 @app.get("/dog")
-def get_dog(kind: DogType | None = None) -> Dog:
-    result = dogs_db[Dog.kind == DogType.dalmatian]
+def get_dog(kind: Union[DogType, None] = None) -> Dog:
+    result = dogs_db[Dog.kind == kind]
     return result
