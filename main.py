@@ -46,3 +46,8 @@ def root():
 @app.post("/post")
 def get_post(tms: Timestamp):
     return tms
+
+
+@app.get("/dog")
+def get_dog(dog_type: DogType) -> str:
+    return dog_type.name
