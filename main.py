@@ -58,8 +58,7 @@ def get_dog(kind: Union[DogType, None] = None) -> list:
 
 @app.post("/dog")
 def create_dog(name: str, kind: str) -> Dog:
-    dog = Dog()
-    dog.name = name
-    dog.kind = kind
-    dog.pk = max(dogs_db.keys()) + 1
+    ind = max(dogs_db.keys()) + 1
+    dog = Dog(name=name, pk=ind, kind=kind)
+    dogs_db[ind] = dog
     return dog
