@@ -65,3 +65,16 @@ def create_dog(name: str, kind: str) -> Dog:
     db_ind = len(post_db)
     post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
     return dog
+
+
+@app.get("/dog/{pk}")
+def get_dog_by_pk(pk: int) -> Dog:
+    result = [dogs_db[key] for key, value in dogs_db.items() if value.pk == pk]
+    return result[0]
+
+
+@app.patch("/dog/{pk}")
+def update_dog(pk: int) -> Dog:
+    key = [key for key, value in dogs_db.items() if value.pk == pk]
+    dog = dogs_db[key[0]]
+    return dog
