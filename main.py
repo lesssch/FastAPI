@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Union
 
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -74,7 +75,10 @@ def get_dog_by_pk(pk: int) -> Dog:
 
 
 @app.patch("/dog/{pk}")
-def update_dog(pk: int) -> Dog:
+def update_dog(pk: int, dog: Dog) -> Dog:
     key = [key for key, value in dogs_db.items() if value.pk == pk]
-    dog = dogs_db[key[0]]
-    return dog
+    stored_item_model = dogs_db[key[0]]
+    update_data = dog.model_dump(exclude_unset=True)
+    updated_item = stored_item_model.model_copy(update=update_data)
+    dogs_db[key[0]] = jsonable_encoder(updated_item)
+    return updated_item
