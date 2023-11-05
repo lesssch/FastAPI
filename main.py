@@ -1,3 +1,4 @@
+import time
 from enum import Enum
 from typing import Union
 
@@ -61,4 +62,6 @@ def create_dog(name: str, kind: str) -> Dog:
     ind = max(dogs_db.keys()) + 1
     dog = Dog(name=name, pk=ind, kind=kind)
     dogs_db[ind] = dog
+    db_ind = len(post_db)
+    post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
     return dog
