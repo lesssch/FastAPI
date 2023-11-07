@@ -1,6 +1,6 @@
 import time
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -18,6 +18,12 @@ class Dog(BaseModel):
     name: str
     pk: int
     kind: DogType
+
+
+class DogUpdated(BaseModel):
+    name: Optional[str]
+    pk: Optional[int]
+    kind: Optional[DogType]
 
 
 class Timestamp(BaseModel):
@@ -53,15 +59,20 @@ def get_post(tms: Timestamp):
 
 @app.get("/dog")
 def get_dog(kind: Union[DogType, None] = None) -> list:
-    result = [dogs_db[key] for key, value in dogs_db.items() if value.kind == kind]
+    if kind:
+        result = [dogs_db[key] for key, value in dogs_db.items() if value.kind == kind]
+    else:
+        result = list(dogs_db)
     return result
 
 
 @app.post("/dog")
-def create_dog(name: str, kind: str) -> Dog:
-    ind = max(dogs_db.keys()) + 1
-    dog = Dog(name=name, pk=ind, kind=kind)
-    dogs_db[ind] = dog
+def create_dog(dog: Dog) -> Dog:
+    key = [key for key, value in dogs_db.items() if value.pk == dog.pk]
+    if len(key) > 0:
+        raise HTTPException(status_code=666, detail='The dog with this ID is already registered')
+    else:
+        dogs_db[max(dogs_db.keys()) + 1] = dog
     db_ind = len(post_db)
     post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
     return dog
@@ -69,14 +80,23 @@ def create_dog(name: str, kind: str) -> Dog:
 
 @app.get("/dog/{pk}")
 def get_dog_by_pk(pk: int) -> Dog:
-    result = [dogs_db[key] for key, value in dogs_db.items() if value.pk == pk]
+    key = [key for key, value in dogs_db.items() if value.pk == pk]
+    if len(key) == 0:
+        raise HTTPException(status_code=404, detail='The dog is not found')
+    else:
+        result = [dogs_db[key] for key, value in dogs_db.items() if value.pk == pk]
     return result[0]
 
 
 @app.patch("/dog/{pk}")
-def update_dog(pk: int) -> Dog:
+def update_dog(pk: int, model: DogUpdated) -> Dog:
     key = [key for key, value in dogs_db.items() if value.pk == pk]
     if len(key) == 0:
         raise HTTPException(status_code=404, detail='The dog is not found')
-    dog = dogs_db[key[0]]
+    else:
+        dog = dogs_db[key[0]]
+        for key, value in model.dict(exclude_unset=True):
+            setattr(dog, key, value)
+        db_ind = len(post_db)
+        post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
     return dog
