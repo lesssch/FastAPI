@@ -2,7 +2,7 @@ import time
 from enum import Enum
 from typing import Union
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
@@ -75,10 +75,9 @@ def get_dog_by_pk(pk: int) -> Dog:
 
 
 @app.patch("/dog/{pk}")
-def update_dog(pk: int, dog: Dog) -> Dog:
+def update_dog(pk: int) -> Dog:
     key = [key for key, value in dogs_db.items() if value.pk == pk]
-    stored_item_model = dogs_db[key[0]]
-    update_data = dog.model_dump(exclude_unset=True)
-    updated_item = stored_item_model.model_copy(update=update_data)
-    dogs_db[key[0]] = jsonable_encoder(updated_item)
-    return updated_item
+    if len(key) == 0:
+        raise HTTPException(status_code=404, detail='The dog is not found')
+    dog = dogs_db[key[0]]
+    return dog
