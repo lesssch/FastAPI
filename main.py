@@ -61,9 +61,9 @@ def get_post(tms: Timestamp):
 @app.get("/dog")
 def get_dog(kind: Union[DogType, None] = None) -> list:
     if kind:
-        result = [dogs_db[key] for key, value in dogs_db.items() if value.kind == kind]
+        result = [value for key, value in dogs_db.items() if value.kind == kind]
     else:
-        result = list(dogs_db)
+        result = list(dogs_db.values())
     return result
 
 
@@ -85,8 +85,8 @@ def get_dog_by_pk(pk: int) -> Dog:
     if len(key) == 0:
         raise HTTPException(status_code=404, detail='The dog is not found')
     else:
-        result = [dogs_db[key] for key, value in dogs_db.items() if value.pk == pk]
-    return result[0]
+        dog = dogs_db[key[0]]
+    return dog
 
 
 @app.patch("/dog/{pk}")
@@ -103,3 +103,8 @@ def update_dog(pk: int, model: Dog) -> Dog:
         db_ind = len(post_db)
         post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
     return dog_updated
+
+
+
+
+print(get_dog())
