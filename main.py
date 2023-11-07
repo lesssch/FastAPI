@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Union, Optional
 
 from fastapi import FastAPI, HTTPException
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -95,8 +96,10 @@ def update_dog(pk: int, model: Dog) -> Dog:
         raise HTTPException(status_code=404, detail='The dog is not found')
     else:
         dog = dogs_db[key[0]]
-        for key, value in model.model_dump(exclude_unset=True):
-            setattr(dog, key, value)
+        update_data = model.model_dump(exclude_unset=True)
+        dog_updated = dog.model_copy(update=update_data)
+        print(dog_updated)
+        dogs_db[key[0]] = jsonable_encoder(dog_updated)
         db_ind = len(post_db)
         post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
-    return dog
+    return dog_updated
