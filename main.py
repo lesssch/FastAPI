@@ -89,13 +89,13 @@ def get_dog_by_pk(pk: int) -> Dog:
 
 
 @app.patch("/dog/{pk}")
-def update_dog(pk: int) -> Dog:
+def update_dog(pk: int, model: Dog) -> Dog:
     key = [key for key, value in dogs_db.items() if value.pk == pk]
     if len(key) == 0:
         raise HTTPException(status_code=404, detail='The dog is not found')
     else:
         dog = dogs_db[key[0]]
-        for key, value in dog.model_dump(exclude_unset=True):
+        for key, value in model.model_dump(exclude_unset=True):
             setattr(dog, key, value)
         db_ind = len(post_db)
         post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
