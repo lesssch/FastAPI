@@ -21,9 +21,9 @@ class Dog(BaseModel):
 
 
 class DogUpdated(BaseModel):
-    name: Optional[str]
-    pk: Optional[int]
-    kind: Optional[DogType]
+    name: Union[str, None] = None
+    pk: Union[int, None] = None
+    kind: Union[DogType, None] = None
 
 
 class Timestamp(BaseModel):
@@ -95,7 +95,7 @@ def update_dog(pk: int, model: DogUpdated) -> Dog:
         raise HTTPException(status_code=404, detail='The dog is not found')
     else:
         dog = dogs_db[key[0]]
-        for key, value in model.dict(exclude_unset=True):
+        for key, value in model.model_dump(exclude_unset=True):
             setattr(dog, key, value)
         db_ind = len(post_db)
         post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
