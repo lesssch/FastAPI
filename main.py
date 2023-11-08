@@ -98,8 +98,7 @@ def update_dog(pk: int, model: Dog) -> Dog:
         dog = dogs_db[key[0]]
         update_data = model.model_dump(exclude_unset=True)
         dog_updated = dog.model_copy(update=update_data)
-        print(dog_updated)
-        dogs_db[key[0]] = jsonable_encoder(dog_updated)
+        dogs_db[key[0]] = dog_updated
         db_ind = len(post_db)
         post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
     return dog_updated
