@@ -9,7 +9,7 @@ from pydantic import BaseModel
 app = FastAPI()
 
 
-class DogType(str, Enum, description='An enumeration.'):
+class DogType(str, Enum, "An enumeration"):
     terrier = "terrier"
     bulldog = "bulldog"
     dalmatian = "dalmatian"
