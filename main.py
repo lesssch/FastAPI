@@ -102,6 +102,3 @@ def update_dog(pk: int, model: Dog) -> Dog:
         db_ind = len(post_db)
         post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
     return dog_updated
-
-
-print(get_dog())
