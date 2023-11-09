@@ -9,7 +9,7 @@ from pydantic import BaseModel
 app = FastAPI()
 
 
-class DogType(str, Enum, "An enumeration"):
+class DogType(str, Enum):  # An enumeration.
     terrier = "terrier"
     bulldog = "bulldog"
     dalmatian = "dalmatian"
@@ -102,8 +102,6 @@ def update_dog(pk: int, model: Dog) -> Dog:
         db_ind = len(post_db)
         post_db.append(Timestamp(id=db_ind, timestamp=time.time_ns()))
     return dog_updated
-
-
 
 
 print(get_dog())
