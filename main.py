@@ -1,6 +1,6 @@
 import time
 from enum import Enum
-from typing import Union
+from typing import Union, List
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -57,7 +57,7 @@ def get_post(tms: Timestamp):
     return tms
 
 
-@app.get("/dog")
+@app.get("/dog", response_model=List[Dog])
 def get_dogs(kind: Union[DogType, None] = None) -> list:
     if kind:
         result = [value for key, value in dogs_db.items() if value.kind == kind]
